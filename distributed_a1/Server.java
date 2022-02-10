@@ -28,8 +28,7 @@ public class Server {
 	/**
 	 * Deals with the client.
 	 */
-	public void handleClient()
-	{
+	public void handleClient() {
 		while(true) {
 			try {
 				Socket clientSocket = serverSocket.accept();
@@ -65,7 +64,6 @@ public class Server {
             System.err.println(BAD_ARG);
             System.exit(1);
         }
-        
 		int port = 0;
 		Server server = null;
 		
@@ -75,7 +73,7 @@ public class Server {
 		} catch (IOException e) {
 			System.out.println("Unable to establish server on given port\n");
 		}
-
+		server.handleClient();
 	}
 
 }

@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Client {
     private static final String USAGE = 
-            "java SingleRequestClient [host] [port]";
+            "java Client [host] [port]";
     private Socket clientSocket;
 
     public Client(String host, int port) {
@@ -67,7 +67,7 @@ public class Client {
         System.out.print("\n>>> ");
         String request = input.nextLine();
 
-        while(request != "QUIT") {
+        while(!request.equals("QUIT")) {
             try {
                 client = new Client(
                                     args[0], 
