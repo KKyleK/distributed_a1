@@ -4,6 +4,9 @@ public class game_logic{
     private ArrayList<String> words_to_guess;
     private ArrayList<char> letters_guessed;
 
+    private int fails = 0;
+    private boolean guessed = false;
+
 //public game_logic(int fails); Customize number of fails allowed
 
 public ArrayList<String> read_file(String file){
@@ -15,13 +18,6 @@ public ArrayList<String> read_file(String file){
     }
     return words;
 }
-
-//Called when you guess a letter. (Updates the game)
-public void guess(String input){
-
-    return;
-}
-
 
 
 //Can make this based on number of words too, right now picks three words.
@@ -53,6 +49,70 @@ public void print_current_words(){
         }
 
     }
+
+//Core logic loop.
+public void prompt() {
+
+    while(!guessed || fails < 3) {
+
+        system.out.println("Guess a letter or the phrase :");
+        String input = reader.readLine(); //This waits
+       
+        if(input.size > 1){ 
+             if(guess_string(input)){
+                 guessed = true;
+                 System.out.println("Congradulations! You guessed the phrase!");
+             }
+             else{
+                System.out.println("That is not the phrase.");
+                 fails++;
+             }
+        }
+
+        else{ 
+            if(letters_guessed.contains(input)){
+                System.out.println("You already guessed that letter, guess again:")
+            }
+             else {
+           if(guess_letter(input)){
+                System.out.println("Correct!");
+            }
+            else {
+                System.out.println("Incorrect!");
+                fails++;
+            }
+           }
+          }
+          print_current_words();
+    }
+    if(fails >= 3){
+        System.out.println("You lose!");
+    }
+
+    return;
+}
+
+
+public boolean guess_letter(char input){
+
+    letters_guessed.add(input);
+    boolean in_phrase = false;
+    String current_word = new String();
+
+    for (int i = 0; i < words_to_guess.size(); i++){
+
+        current_word = words_to_guess.get(i);
+
+        for (int j = 0; j < current_word.length(); j++){
+            if (current_word.charAt(j) == input) {
+                in_phrase = true;
+            }
+        }
+    }
+
+    return in_phrase;
+}
+
 }
 
 
@@ -65,20 +125,11 @@ public static void main(String[] args) {
  game.pick_words(difficulty);
 
  //Begin the game
- BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
- String input = new String();
-
  system.out.println("Start of game");
+ system.out.println("Phrase to guess: " + print_current_words());
 
- system.out.println("Guess the phrase: " + print_current_words())
 
- system.out.println("Guess a letter or a phrase :");
- String input = reader.readLine(); //This waits
+game.prompt();  //This holds the game logic
 
- if(input.size > 1){ 
-    guess_string(input);
-   }
-   else{ 
-    guess_letter(input);
-   }
+ 
 }
