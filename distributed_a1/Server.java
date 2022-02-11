@@ -1,4 +1,5 @@
 package distributed_a1;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,31 +18,30 @@ import java.util.Scanner;
  *
  */
 public class Server {
-	
+
 	private static final String BAD_ARG = "Please specify a port number.\n";
 	private ServerSocket serverSocket;
-	
+
 	public Server(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
 	}
-	
+
 	/**
 	 * Deals with the client.
 	 */
 	public void handleClient() {
-		while(true) {
+		while (true) {
 			try {
 				Socket clientSocket = serverSocket.accept();
-				PrintStream out =
-					new PrintStream(clientSocket.getOutputStream());
+				PrintStream out = new PrintStream(clientSocket.getOutputStream());
 				BufferedReader in = new BufferedReader(
-					new InputStreamReader(clientSocket.getInputStream()));
+						new InputStreamReader(clientSocket.getInputStream()));
 				String inputLine = in.readLine();
-				String outputLine = serverLogic(inputLine); 
+				String outputLine = serverLogic(inputLine);
 				while (inputLine != null) {
-					out.println(outputLine);
+					out.println(outputLine); // Instantly sends it. Can I pipe system.out into this?
 					inputLine = in.readLine();
-					outputLine = serverLogic(inputLine); 
+					outputLine = serverLogic(inputLine);
 				}
 				clientSocket.close();
 			} catch (SocketException e) {
@@ -49,24 +49,28 @@ public class Server {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 
-	public String serverLogic (String input) {
-		//Presumably where we handle all input from the client.
-		//For now, returns the input string.
+	public String serverLogic(String input) {
+
+		game_logic game = new game_logic(); // This is number of fails
+		game.run();
+		// Presumably where we handle all input from the client.
+		// For now, returns the input string.
+
 		return input;
 	}
 
 	public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.err.println(BAD_ARG);
-            System.exit(1);
-        }
+		if (args.length != 1) {
+			System.err.println(BAD_ARG);
+			System.exit(1);
+		}
 		int port = 0;
 		Server server = null;
-		
+
 		try {
 			port = Integer.parseInt(args[0]);
 			server = new Server(port);
