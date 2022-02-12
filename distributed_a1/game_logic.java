@@ -1,5 +1,10 @@
+package distributed_a1;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +16,8 @@ public class game_logic {
     private ArrayList<String> words;
     private ArrayList<String> words_to_guess;
     private ArrayList<Character> letters_guessed;
+	private BufferedReader in;
+    private PrintStream out;
 
     private int fails; // Number of fails allowed
     private int current_fails = 0;
@@ -19,8 +26,10 @@ public class game_logic {
 
     private int num_words_to_guess;
 
-    public game_logic() {
+    public game_logic(BufferedReader in, PrintStream out) {
 
+    	this.in = in;
+    	this.out = out;
         words = new ArrayList<String>();
         words_to_guess = new ArrayList<String>();
         letters_guessed = new ArrayList<Character>();
@@ -85,16 +94,16 @@ public class game_logic {
 
             for (int j = 0; j < current_word.length(); j++) {
                 if (letters_guessed.contains(current_word.charAt(j))) {
-                    System.out.print(current_word.charAt(j));
+                    out.print(current_word.charAt(j));
                 } else {
-                    System.out.print("_");
+                    out.print("_");
                 }
-                System.out.print(" ");
+                out.print(" ");
             }
-            System.out.print("   ");
+            out.print("   ");
             num_printed += current_word.length() + 3; // For the blank space
             if (num_printed >= 80) {
-                System.out.print('\n');
+                out.print('\n');
                 num_printed = 0;
             }
         }
@@ -102,35 +111,35 @@ public class game_logic {
     }
 
     // Core logic loop.
-    public void prompt() {
+    public void prompt() throws IOException {
 
-        Scanner reader = new Scanner(System.in);
+        Scanner reader = new Scanner(System.in); //replaced by in.readline()
 
         while (!guessed && current_fails < fails) {
 
-            System.out.print("\nGuess a letter or the phrase: ");
-            String input = reader.nextLine(); // This waits
+            out.print("\nGuess a letter or the phrase: ");
+            String input = in.readLine(); // This waits
 
             if (input.length() > 1) { // Guess was a string!
                 if (guess_string(input)) {
                     guessed = true;
-                    System.out.println("Congratulations! You guessed the phrase!");
+                    out.println("Congratulations! You guessed the phrase!");
                 } else {
-                    System.out.println("That is not the phrase.");
+                    out.println("That is not the phrase.");
                     current_fails++;
                 }
             }
             // Guess was a character
             else {
                 if (letters_guessed.contains(input.charAt(0))) {
-                    System.out.println("You already guessed that letter, guess again:");
+                    out.println("You already guessed that letter, guess again:");
                 } else {
 
                     letters_guessed.add(input.charAt(0));
                     if (guess_letter(input.charAt(0))) {
-                        System.out.println("Correct!");
+                        out.println("Correct!");
                     } else {
-                        System.out.println("Incorrect!");
+                        out.println("Incorrect!");
                         current_fails++;
                     }
                 }
@@ -140,7 +149,7 @@ public class game_logic {
             }
         }
         if (current_fails >= fails) {
-            System.out.println("You lose!");
+            out.println("You lose!");
         }
 
         reader.close();
@@ -192,7 +201,7 @@ public class game_logic {
             try {
                 read_file("words.txt");
             } catch (FileNotFoundException e) {
-                System.out.println("Could not find input file words.txt");
+                out.println("Could not find input file words.txt");
                 System.exit(0);
             }
         }
@@ -201,41 +210,49 @@ public class game_logic {
         boolean success; // If there were enough words of the length requested.
         try {
             do {
-                System.out.println("Enter how long you want the words to be: ");
-                difficulty = reader.nextInt();
+                out.println("Enter how long you want the words to be: ");
+                difficulty = in.read();
 
-                System.out.println("How many words would you like to guess?");
-                num_words_to_guess = reader.nextInt();
+                out.println("How many words would you like to guess?");
+                num_words_to_guess = in.read();
 
                 success = pick_words(difficulty);
                 if (!success) {
-                    System.out.println("There are not enough words of that length.");
+                    out.println("There are not enough words of that length.");
                 }
 
             } while (!success);
 
-            System.out.println("How many lives would you like?");
-            fails = reader.nextInt();
+          out.println("How many lives would you like?");
+            fails = in.read();
 
         } catch (InputMismatchException e) {
-            System.out.println("Input is not a number");
+            out.println("Input is not a number");
             reader.close();
             return;
+        } catch (IOException e) {
+        	e.printStackTrace();
+        	return;
         }
 
         // Begin the game
+    try {
         System.out.println("Phrase to guess: ");
         print_current_words();
         prompt(); // This holds the game logic
         reader.close();
-
+    } catch (IOException e) {
+    	e.printStackTrace();
+    	return;
+    }
         return;
     }
-
+/*
     public static void main(String[] args) {
 
-        game_logic game = new game_logic(); // COMMENT THIS OUT FOR SERVER
+        game_logic game = new game_logic(null,null); // COMMENT THIS OUT FOR SERVER
         game.run(); //
     }
+ */
 
 }

@@ -33,16 +33,14 @@ public class Server {
 		while (true) {
 			try {
 				Socket clientSocket = serverSocket.accept();
+				System.out.println("Client Connected");
 				PrintStream out = new PrintStream(clientSocket.getOutputStream());
 				BufferedReader in = new BufferedReader(
 						new InputStreamReader(clientSocket.getInputStream()));
-				String inputLine = in.readLine();
-				String outputLine = serverLogic(inputLine);
-				while (inputLine != null) {
-					out.println(outputLine); // Instantly sends it. Can I pipe system.out into this?
-					inputLine = in.readLine();
-					outputLine = serverLogic(inputLine);
-				}
+				
+		        game_logic game = new game_logic(in, out);
+		        game.run();
+		        
 				clientSocket.close();
 			} catch (SocketException e) {
 				System.out.println(e.getMessage());
@@ -51,16 +49,6 @@ public class Server {
 			}
 
 		}
-	}
-
-	public String serverLogic(String input) {
-
-		game_logic game = new game_logic(); // This is number of fails
-		game.run();
-		// Presumably where we handle all input from the client.
-		// For now, returns the input string.
-
-		return input;
 	}
 
 	public static void main(String[] args) throws IOException {
