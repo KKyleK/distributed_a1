@@ -192,6 +192,7 @@ public class game_logic {
 
         return in_phrase;
     }
+    
 
     public void run() {
 
@@ -211,10 +212,10 @@ public class game_logic {
         try {
             do {
                 out.println("Enter how long you want the words to be: ");
-                difficulty = in.read();
+                difficulty = Integer.parseInt(in.readLine());
 
                 out.println("How many words would you like to guess?");
-                num_words_to_guess = in.read();
+                num_words_to_guess = Integer.parseInt(in.readLine());
 
                 success = pick_words(difficulty);
                 if (!success) {
@@ -224,7 +225,7 @@ public class game_logic {
             } while (!success);
 
           out.println("How many lives would you like?");
-            fails = in.read();
+            fails = Integer.parseInt(in.readLine());
 
         } catch (InputMismatchException e) {
             out.println("Input is not a number");
@@ -237,7 +238,7 @@ public class game_logic {
 
         // Begin the game
     try {
-        System.out.println("Phrase to guess: ");
+        out.println("Phrase to guess: ");
         print_current_words();
         prompt(); // This holds the game logic
         reader.close();

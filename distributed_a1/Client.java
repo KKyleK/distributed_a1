@@ -13,45 +13,47 @@ import java.util.Scanner;
 public class Client {
     private static final String USAGE = "java Client [host] [port]";
     private Socket clientSocket;
+    BufferedReader in;
+    PrintStream out;
 
+    /**
+     * Default constructor.
+     * @param host
+     * @param port
+     */
     public Client(String host, int port) {
         try {
             clientSocket = new Socket(host, port);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    void writeRequest(String request) {
-        System.out.println("\nSending the request: "
-                + request + " to the server!");
-        try {
-            // Create output streams & write the request to the server
-            PrintStream out = new PrintStream(clientSocket.getOutputStream());
-            out.println(request);
-            out.println();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    void readAndPrintResponse() {
-        System.out.println("\nWaiting for reply from the server!");
-        try {
-            BufferedReader in = new BufferedReader(
+            in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
-            // clientSocket.setSoTimeout(10000);
-            String line = in.readLine();
-            System.out.println(line);
-
-            in.close();
-            clientSocket.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+            out = new PrintStream(clientSocket.getOutputStream());
+        } catch (Exception e) {
+        	System.out.println("Unable to connect to server!\n");
             System.exit(1);
         }
+    }
+
+    
+    /**
+     * Sends a entered line off to the server.
+     * @param request
+     */
+    void writeRequest(String request) {
+            // Create output streams & write the request to the server
+            out.println(request);
+    }
+
+    /**
+     * Receives a message from the server.
+     * @throws IOException 
+     */
+    void readAndPrintResponse() throws IOException {
+        String line = in.readLine();
+        System.out.println(line);
+    	while(in.ready()) {
+            line = in.readLine();
+            System.out.println(line);
+    	}
     }
 
     public static void main(String[] args) throws IOException {
@@ -61,16 +63,23 @@ public class Client {
             System.out.println(USAGE);
             System.exit(1);
         }
+        
+        try {
+            client = new Client(
+                    args[0],
+                    Integer.parseInt(args[1]));
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid port number: " + args[1] + ".");
+            System.exit(1);
+        }
 
+        client.readAndPrintResponse();
         Scanner input = new Scanner(System.in);
         System.out.print("\n>>> ");
         String request = input.nextLine();
-
+        
         while (!request.equals("QUIT")) {
             try {
-                client = new Client(
-                        args[0],
-                        Integer.parseInt(args[1]));
                 client.writeRequest(request);
                 client.readAndPrintResponse();
             } catch (NumberFormatException e) {
