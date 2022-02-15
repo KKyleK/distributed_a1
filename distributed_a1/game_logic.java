@@ -50,6 +50,42 @@ public class game_logic {
         Collections.shuffle(words);
         return words;
     }
+    
+    /**
+     * Sends a signal to the client to wait for input.
+     */
+    private void request(){
+		out.print("\u0005");
+    }
+    
+    /**
+     * Reads a number from input.
+     * @return
+     * @throws IOException 
+     */
+    private int read_int() throws IOException
+    {
+    	while(true)
+    	{
+    		try {
+		    	request();
+		    	return Integer.parseInt(in.readLine());
+		    } catch (NumberFormatException e) {
+		        out.println("Input is not a number, try again!");
+		    }
+    	}
+    }
+    
+    /**
+     * Reads a String from input.
+     * @return
+     * @throws IOException
+     */
+    private String read_string() throws IOException 
+    {
+    	request();
+    	return in.readLine();
+    }
 
     /**
      * 
