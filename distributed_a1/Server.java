@@ -74,8 +74,7 @@ public class Server {
 
 		try {
 			port = Integer.parseInt(args[0]);
-			System.out.println("1 "+port);
-			server = new ServerSocket(5599);
+			server = new ServerSocket(port);
 			System.out.println("The server is running...");
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5); // Handle up to 5 clients
             while (true) {
