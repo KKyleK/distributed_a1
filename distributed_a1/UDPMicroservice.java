@@ -4,8 +4,8 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class BasicUDPTimeServer {
-	private static final String USAGE = "Usage: java BasicUDPTimeServer [port]";
+public class UDPMicroservice {
+	private static final String USAGE = "Usage: java UDPMicroservice [port]";
 	protected DatagramSocket socket = null;
 	protected BufferedReader in = null;
 
@@ -13,11 +13,11 @@ public class BasicUDPTimeServer {
 
 	private int wordCount = 21543;
 	
-	public BasicUDPTimeServer() throws IOException {
+	public UDPMicroservice() throws IOException {
 		this(5599);
 	}
 	
-	public BasicUDPTimeServer(int port) throws IOException {
+	public UDPMicroservice(int port) throws IOException {
 		socket = new DatagramSocket(port);
 	}
 	
