@@ -3,9 +3,9 @@ import java.io.IOException;
 import java.net.*;
 
 
-public class SingleRequestUDPClient {
+public class UDPMicroservice_Client {
 	private static final String USAGE = 
-	"java SingleRequestUDPClient [host] [port] [request]";
+	"java UDPMicroservice_Client [host] [port] [request]";
 
 	public static void main(String[] args) throws IOException {
         if (args.length != 3) {
