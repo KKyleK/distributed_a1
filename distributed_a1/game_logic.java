@@ -55,7 +55,7 @@ public class game_logic {
      * Sends a signal to the client to wait for input.
      */
     private void request(){
-		out.print("\u0005");
+		out.println("\u0005");
     }
     
     /**
@@ -149,12 +149,10 @@ public class game_logic {
     // Core logic loop.
     public void prompt() throws IOException {
 
-        Scanner reader = new Scanner(System.in); //replaced by in.readline()
-
         while (!guessed && current_fails < fails) {
 
-            out.print("\nGuess a letter or the phrase: ");
-            String input = in.readLine(); // This waits
+            out.println("\nGuess a letter or the phrase: ");
+            String input = read_string(); // This waits
 
             if (input.length() > 1) { // Guess was a string!
                 if (guess_string(input)) {
@@ -187,8 +185,6 @@ public class game_logic {
         if (current_fails >= fails) {
             out.println("You lose!");
         }
-
-        reader.close();
 
         return;
     }
@@ -232,8 +228,6 @@ public class game_logic {
 
     public void run() {
 
-        Scanner reader = new Scanner(System.in);
-
         if (words.isEmpty()) { // Might already have been read in.
             try {
                 read_file("words.txt");
@@ -248,10 +242,10 @@ public class game_logic {
         try {
             do {
                 out.println("Enter how long you want the words to be: ");
-                difficulty = Integer.parseInt(in.readLine());
+                difficulty = read_int();
 
                 out.println("How many words would you like to guess?");
-                num_words_to_guess = Integer.parseInt(in.readLine());
+                num_words_to_guess = read_int();
 
                 success = pick_words(difficulty);
                 if (!success) {
@@ -261,11 +255,10 @@ public class game_logic {
             } while (!success);
 
           out.println("How many lives would you like?");
-            fails = Integer.parseInt(in.readLine());
+            fails = read_int();
 
         } catch (InputMismatchException e) {
             out.println("Input is not a number");
-            reader.close();
             return;
         } catch (IOException e) {
         	e.printStackTrace();
@@ -273,23 +266,13 @@ public class game_logic {
         }
 
         // Begin the game
-    try {
-        out.println("Phrase to guess: ");
-        print_current_words();
-        prompt(); // This holds the game logic
-        reader.close();
-    } catch (IOException e) {
-    	e.printStackTrace();
-    	return;
+	    try {
+	        out.println("Phrase to guess: ");
+	        print_current_words();
+	        prompt(); // This holds the game logic
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    	return;
+	    }
     }
-        return;
-    }
-/*
-    public static void main(String[] args) {
-
-        game_logic game = new game_logic(null,null); // COMMENT THIS OUT FOR SERVER
-        game.run(); //
-    }
- */
-
 }

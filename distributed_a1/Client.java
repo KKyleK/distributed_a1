@@ -47,13 +47,15 @@ public class Client {
      * Receives a message from the server.
      * @throws IOException 
      */
-    void readAndPrintResponse() throws IOException {
-        String line = in.readLine();
-        System.out.println(line);
-    	while(in.ready()) {
-            line = in.readLine();
-            System.out.println(line);
-    	}
+    private boolean readAndPrintResponse() throws IOException {
+    		if(in.ready()) {
+	            String line = in.readLine();
+	            if (line.equals("\u0005") )
+	            	return false;
+	            else
+	            	System.out.println(line);
+    		}
+            return true;
     }
 
     public static void main(String[] args) throws IOException {
@@ -72,16 +74,24 @@ public class Client {
             System.err.println("Invalid port number: " + args[1] + ".");
             System.exit(1);
         }
+        
+        boolean client_wait = true;
+        
+        while(client_wait) {
+        	client_wait = client.readAndPrintResponse();
+        }
+        client_wait = true;
 
-        client.readAndPrintResponse();
+        System.out.print(">>> ");
         Scanner input = new Scanner(System.in);
-        System.out.print("\n>>> ");
         String request = input.nextLine();
         
         while (!request.equals("QUIT")) {
             try {
                 client.writeRequest(request);
-                client.readAndPrintResponse();
+                while(client_wait)
+                	client_wait = client.readAndPrintResponse();
+                client_wait = true;
             } catch (NumberFormatException e) {
                 System.err.println("Invalid port number: " + args[1] + ".");
                 System.exit(1);
@@ -90,7 +100,7 @@ public class Client {
                 System.exit(1);
             }
 
-            System.out.print("\n>>> ");
+            System.out.print(">>> ");
             request = input.nextLine();
         }
     }

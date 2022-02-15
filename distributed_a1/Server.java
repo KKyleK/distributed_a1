@@ -41,7 +41,9 @@ public class Server {
 		        game_logic game = new game_logic(in, out);
 		        game.run();
 		        
+		        out.println("Game over, Ending Connection");
 				clientSocket.close();
+		        System.out.println("Client Disconnected");
 			} catch (SocketException e) {
 				System.out.println(e.getMessage());
 			} catch (Exception e) {
