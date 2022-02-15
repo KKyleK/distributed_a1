@@ -70,6 +70,15 @@ public class Client {
             client = new Client(
                     args[0],
                     Integer.parseInt(args[1]));
+            
+            System.out.print(
+                      "\nCommands:\n"
+                    + "Start <i> <f> - Starts a game with f words of max length i.\n"
+                    + "                You will have i x f attempts to guess the phrase!\n"
+                    + "add <word>    - Add a word to the list of possible words.\n"
+                    + "remove <word> - Remove a word from the list of possible words.\n"
+                    + "check <word>  - Check if a word exists in the list of possible words.\n\n");
+            
         } catch (NumberFormatException e) {
             System.err.println("Invalid port number: " + args[1] + ".");
             System.exit(1);
