@@ -71,6 +71,7 @@ public class Client {
                     args[0],
                     Integer.parseInt(args[1]));
             
+            // Commands are not functional yet
             System.out.print(
                       "\nCommands:\n"
                     + "Start <i> <f> - Starts a game with f words of max length i.\n"
