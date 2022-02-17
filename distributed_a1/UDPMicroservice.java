@@ -223,7 +223,7 @@ public class UDPMicroservice {
 			System.out.println(e);
 		  }
 
-		return line;
+		return line.toLowerCase();
 	}
 
     public static void main(String[] args) throws IOException {
