@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,45 +39,80 @@ public class Server {
 	    private BufferedReader in;
 	    private PrintStream out;
 	    
+	    private DatagramSocket socket;
+	    private String host;
+	    private int UDPport;
+	    private InetAddress address;
+	    
 	    ClientHandler(Socket socket) throws IOException {
 	        this.clientSocket = socket;
 	        this.in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
 	        this.out = new PrintStream(clientSocket.getOutputStream());
+	        
+	        this.socket = new DatagramSocket();
+	        this.host = "localhost";
+	        this.UDPport = 5550;
+	        this.address = InetAddress.getByName(host);
+	        
 	    }
 	    
-	    private String[] parse_cmd() throws IOException {
+	    /**
+	     * 
+	     * @return
+	     * @throws IOException
+	     */
+	    private String parse_args() throws IOException {
 	        while(true) {
 	            try {
 	                request();
-	                String[] cmd = in.readLine().split(" ", 3);
-	                return cmd;
+	                String args = in.readLine();
+	                return args;
 	            } catch (IOException e) {
-	                out.println("Input was not a valid command. Try again.");
+	                retry();
 	            }
 	            
 	        }
 	        
 	    }
 
-	    // COMMAND HANDLING 
-	    
+
+	    /**
+	     * Starts a guessing game
+	     */
 	    private void start_game() {
 	        game_logic game = new game_logic(in, out);
             game.run();
 	    }
-	    
-	    private void add_word() {
-	        
+	  
+	    /**
+	     * Makes the desired request to the word store
+	     * @param cmd
+	     * @return
+	     */
+	    private String wordstore_request(String cmd) {
+	        try {
+	            byte[] buf = new byte[1000];
+                byte[] buf2 = new byte[1000];
+                buf = cmd.getBytes();
+                
+                // send request
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, UDPport);
+                socket.send(packet);
+                
+                // get response
+                packet = new DatagramPacket(buf2, buf2.length);
+                socket.receive(packet);
+                
+                String received = new String(packet.getData(), 0, packet.getLength());
+                return received;
+	        } catch (Exception e) {
+	            System.err.println(e.getMessage());
+                System.exit(1);
+	        }
+            return null;
 	    }
 	    
-	    private void remove_word() {
-	        
-	    }
-	    
-	    private void check_word() {
-	        
-	    }
 	    
 	    /**
 	     * Sends a signal to the client to wait for input.
@@ -102,41 +138,51 @@ public class Server {
 				
 				boolean flag = true;
 				while(flag) {
-    				String[] cmd = parse_cmd();
-    				if (cmd.length == 3) {
-    				    try {
-                            int i = Integer.parseInt(cmd[1]);
-                            int f = Integer.parseInt(cmd[2]);
-                            start_game();
-                        } catch(NumberFormatException e) {
-                            retry();
-                        }
-    				    
-    				} else if(cmd.length == 2) {
-        				switch(cmd[0]) {
-        				    
-        				    case "add":
-        				        // microservice
-        				        add_word();
-        				        break;
-        				        
-        				    case "remove":
-        				        // microservice
-        				        remove_word();
-        				        break;
-        				        
-        				    case "check":
-        				        // microservice
-        				        check_word();
-        				        break;
-        				        
-        				    default:
-        				        retry();
-        				}
-        				
-        			} else {
-        			    retry();
-        			}
+    				String args = parse_args();
+    				String[] cmd = args.split(" ", 3);
+    				switch(cmd[0]) {
+    				    case "start":
+    				        
+    				        if (cmd.length != 3) {
+    				            retry();
+    				            break;
+    				        }
+    				        
+    				        try {
+                                int i = Integer.parseInt(cmd[1]);
+                                int f = Integer.parseInt(cmd[2]);
+                                int attempts = i * f;
+                                ArrayList<String> words = new ArrayList<String>();
+                                
+                                // retrieve i words from wordstore
+                                for(int w = 0; w < i; w++) {
+                                    words.add(wordstore_request("random"));
+                                }
+                                System.out.println(words);
+                                
+                                //start_game(words, attempts);
+                            } catch(NumberFormatException e) {
+                                retry();
+                            }
+    				        
+    				        break;
+    				        
+    				    case "add":
+    				        System.out.println(wordstore_request(args));
+    				        
+    				        break;
+    				        
+    				    case "remove":
+    				        System.out.println(wordstore_request(args));
+    				        break;
+    				        
+    				    case "check":
+    				        System.out.println(wordstore_request(args));
+    				        break;
+    				        
+    				    default:
+    				        retry();
+    				}
 				}
     		       
 		        out.println("Game over, Ending Connection");
@@ -158,8 +204,19 @@ public class Server {
 			System.exit(1);
 		}
 		int port = 0;
+		String host = "localhost";
 		ServerSocket server = null;
-
+		
+		// Connect to word store
+		try {
+		    DatagramSocket socket = new DatagramSocket();
+		    InetAddress address = InetAddress.getByName(host);
+		} catch(Exception e) {
+		    System.err.println(e.getMessage());
+		    System.exit(1);
+		}
+		
+		// Open connection for clients
 		try {
 			port = Integer.parseInt(args[0]);
 			server = new ServerSocket(port);

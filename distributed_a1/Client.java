@@ -74,7 +74,7 @@ public class Client {
             // Commands are not functional yet
             System.out.print(
                       "\nCommands:\n"
-                    + "Start <i> <f> - Starts a game with f words of max length i.\n"
+                    + "Start <i> <f> - Starts a game with i words to guess.\n"
                     + "                You will have i x f attempts to guess the phrase!\n"
                     + "add <word>    - Add a word to the list of possible words.\n"
                     + "remove <word> - Remove a word from the list of possible words.\n"
