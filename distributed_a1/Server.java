@@ -193,6 +193,13 @@ public class Server {
                                 
                                 
                                start_game(words, attempts);
+                               out.println("You are back at the main menu, select option: ");
+                               out.println("| Start <i> <f> - Starts a game with i words to guess.                    |\n"
+                                       + "|                 You will have i x f attempts to guess the phrase!       |\n"
+                                       + "| add <word>    - Add a word to the list of possible words.               |\n"
+                                       + "| remove <word> - Remove a word from the list of possible words.          |\n"
+                                       + "| check <word>  - Check if a word exists in the list of possible words.   |\n"
+                                       + "| Type QUIT to exit the game.                                             |");
                             } catch(NumberFormatException e) {
                                 retry();
                             }
@@ -219,6 +226,7 @@ public class Server {
     				    default:
     				        retry();
     				}
+    				
 				}
     		       
 		        out.println("Game over, Ending Connection");
