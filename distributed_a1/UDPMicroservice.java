@@ -30,12 +30,11 @@ public class UDPMicroservice {
                 byte[] inputbuf = new byte[256];
                 byte[] outputbuf = new byte[256];
 
-                // receive request
+                // Receive request
                 DatagramPacket udpRequestPacket = new DatagramPacket(inputbuf, inputbuf.length);
                 socket.receive(udpRequestPacket);
 
                 String msg = new String(udpRequestPacket.getData(), udpRequestPacket.getOffset(), udpRequestPacket.getLength());
-                //System.out.println(msg);
 
                 outputbuf = pick(msg).getBytes();
                
@@ -54,6 +53,11 @@ public class UDPMicroservice {
         }   
     }
 
+    /**
+    * Choses function based on input.
+    * Returns string with expected output.
+    *
+    */
     public String pick(String input)
     {
         String[] sp = input.split(" ");
@@ -80,6 +84,10 @@ public class UDPMicroservice {
         return output;
     }
 
+    /**
+    * Adds a word to the word list based on input. Checks if the word exists before inputting.
+    */
+    
     public void add(String input)
     {
         Scanner sc = null;
@@ -128,6 +136,10 @@ public class UDPMicroservice {
             System.err.println(e);
         }
     }
+    
+    /**
+    * Removes a word to the word list based on input.
+    */
 
     public void remove(String input)
     {
@@ -172,6 +184,12 @@ public class UDPMicroservice {
         }
     }
     
+    /**
+    * Checks if a word to the word list based on input. 
+    * Returns expected output statement based on result.
+    *
+    */
+    
     public String check(String input)
     {
         boolean found = false;
@@ -207,6 +225,12 @@ public class UDPMicroservice {
             return input + " does not exist in the word list.\n";
         }
     }
+    
+    /**
+    * 
+    * Returns a random word in the word list.
+    *
+    */
 
     public String random()
     {
