@@ -7,17 +7,12 @@ import java.util.*;
 import java.util.stream.*;
 
 public class UDPMicroservice {
-    private static final String USAGE = "Usage: java UDPMicroservice [port]";
     protected DatagramSocket socket = null;
     protected BufferedReader in = null;
 
     private File file = new File("words.txt");
 
     private int wordCount = 21543;
-    
-    public UDPMicroservice() throws IOException {
-        this(5599);
-    }
     
     public UDPMicroservice(int port) throws IOException {
         socket = new DatagramSocket(port);
@@ -254,7 +249,7 @@ public class UDPMicroservice {
 
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
-            System.err.println(USAGE);
+            System.err.println("Microservice error.");
             System.exit(1);
         }
         
