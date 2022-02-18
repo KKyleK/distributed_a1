@@ -27,8 +27,13 @@ public class Server {
 	private static final String BAD_ARG = "Please specify a port number.\n";
 	private ServerSocket serverSocket;
 	
+	public static int totalScore;
+	
+	
+	
 	public Server(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
+		totalScore = 0;
 	}
 	
 	/**
@@ -43,6 +48,7 @@ public class Server {
 	    private String host;
 	    private int UDPport;
 	    private InetAddress address;
+	  //  private int totalScore;
 	    
 	    ClientHandler(Socket socket) throws IOException {
 	        this.clientSocket = socket;
@@ -54,7 +60,7 @@ public class Server {
 	        this.host = "localhost";
 	        this.UDPport = 5550;
 	        this.address = InetAddress.getByName(host);
-	        
+	       // this.totalScore = 0;
 	    }
 	    
 	    /**
@@ -75,20 +81,39 @@ public class Server {
 	        }
 	        
 	    }
-
-
+	    
 	    /**
 	     * Starts a guessing game
 	     */
 	    private void start_game(ArrayList<String> words, int attempts) {
 	    	boolean success;
-	        game_logic game = new game_logic(in, out, words, attempts);
+	        game_logic game = new game_logic(in, out, words, attempts, socket);
 	        success = game.run();
 	        
-	        out.print("Number of total wins: " + '\n'); //TODO
+	        int score;
+	        if(success == true) {
+	        	score = 1;
+	        }
+	        else {
+	        	score = -1;
+	        }
+	        
+	        doCritSect(score);
+	        
+	        out.println("Number of total wins: " + totalScore);
             return;    
 	    }
 	  
+	    synchronized private void doCritSect(int score)
+	    {
+	    	if(totalScore<=0 && score == -1) {
+	    		
+	    	}
+	    	else {
+	    		totalScore += score;
+	    	}
+	    }
+	    
 	    /**
 	     * Makes the desired request to the word store
 	     * @param cmd

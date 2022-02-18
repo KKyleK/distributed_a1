@@ -71,7 +71,6 @@ public class Client {
                     args[0],
                     Integer.parseInt(args[1]));
             
-            // Commands are not functional yet
             System.out.print(
                       "\n---------------------------------------------------------------------------\n"
                     + "|                 ???        Guess the Phrase!        ???                 |\n"

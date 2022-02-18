@@ -11,9 +11,17 @@ import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+
+
+
+
+
+import java.net.*;
+
+
 public class game_logic {
 
-   // private ArrayList<String> words;
+	private DatagramSocket socket;
     private ArrayList<String> words_to_guess;
     private ArrayList<Character> letters_guessed;
 	private BufferedReader in;
@@ -24,9 +32,8 @@ public class game_logic {
 
     private boolean guessed = false;
 
-    private int num_words_to_guess;   //Probably delete this.
 
-    public game_logic(BufferedReader in, PrintStream out, ArrayList<String> words, int attempts) {
+    public game_logic(BufferedReader in, PrintStream out, ArrayList<String> words, int attempts, DatagramSocket socket) {
 
     	this.in = in;
     	this.out = out;
@@ -34,8 +41,45 @@ public class game_logic {
     	words_to_guess = words;
     	fails = attempts;
         letters_guessed = new ArrayList<Character>();
+        this.socket = socket;
     }
 
+    
+    public void check_if_word(String word) {
+    
+    	String input = "check " + word;
+    try {
+        byte[] buf = new byte[1000];
+        byte[] buf2 = new byte[1000];
+        
+        buf = input.getBytes();
+        InetAddress address = InetAddress.getByName("localhost"); 
+        
+        
+        // send request
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 5550);
+        socket.send(packet);
+        
+        // get response
+        packet = new DatagramPacket(buf2, buf2.length);
+        socket.receive(packet);
+        
+        String received = new String(packet.getData(), 0, packet.getLength());
+        out.println(received);
+        
+    }
+    catch(Exception e) {
+    	return;
+    }
+	return;
+    }
+   
+     
+    
+    
+    
+    
+    
     
     /**
      * Sends a signal to the client to wait for input.
@@ -84,7 +128,7 @@ public class game_logic {
         int num_printed = 0; // Limit the print width to 80
 
         for (int i = 0; i < words_to_guess.size(); i++) {
-            current_word = words_to_guess.get(i); // A word in the arrayList
+            current_word = words_to_guess.get(i);   // A word in the arrayList
 
             for (int j = 0; j < current_word.length(); j++) {
                 if (letters_guessed.contains(current_word.charAt(j))) {
@@ -124,6 +168,12 @@ public class game_logic {
             String input = read_string(); // This waits
 
             if (input.length() > 1) { // Guess was a string!
+            	
+            	if (input.charAt(0) == '?') { 
+            		check_if_word(input.substring(1));
+            	}
+            	else {
+            		
                 if (guess_string(input)) {
                     guessed = true;
             
@@ -132,8 +182,14 @@ public class game_logic {
                     current_fails++;
                 }
             }
-            // Guess was a character
-            else {
+            }
+           
+            else {   // Guess was a character
+            	
+            	if(input.charAt(0) == '.') {  //Forfeit.
+            		return false; 
+            	}
+            	
                 if (letters_guessed.contains(input.charAt(0))) {
                     out.println("You already guessed that letter, guess again:");
                 } else {
@@ -247,7 +303,7 @@ public class game_logic {
 
         return in_phrase;
     }
-    
+     
 /**
  * 
  * @return If the player won or not.
