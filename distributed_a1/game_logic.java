@@ -11,13 +11,7 @@ import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-
-
-
-
-
 import java.net.*;
-
 
 public class game_logic {
 
@@ -74,13 +68,6 @@ public class game_logic {
 	return;
     }
    
-     
-    
-    
-    
-    
-    
-    
     /**
      * Sends a signal to the client to wait for input.
      */
@@ -89,8 +76,8 @@ public class game_logic {
     }
     
     /**
-     * Reads a number from input.
-     * @return
+     * Requests an int from the client.
+     * @return The requested int.
      * @throws IOException 
      */
     private int read_int() throws IOException
@@ -107,8 +94,8 @@ public class game_logic {
     }
     
     /**
-     * Reads a String from input.
-     * @return
+     * Requests a String from the client.
+     * @return The requested String.
      * @throws IOException
      */
     private String read_string() throws IOException 

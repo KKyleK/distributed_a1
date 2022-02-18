@@ -12,11 +12,8 @@ import java.util.Scanner;
 
 /**
  * Implementation of the game client.
- * Run with Client [Host IP] [Port #].
- *
  */
 public class Client {
-    private static final String USAGE = "java Client [host] [port]";
     private Socket clientSocket;
     BufferedReader in;
     PrintStream out;
@@ -66,40 +63,28 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
         Client client = null;
-
-        if (args.length != 2) {
-            System.out.println(USAGE);
-            System.exit(1);
-        }
         
-        try {
-            client = new Client(
-                    args[0],
-                    Integer.parseInt(args[1]));
-            
-            System.out.print(
-                      "\n---------------------------------------------------------------------------\n"
-                    + "|                 ???        Guess the Phrase!        ???                 |\n"
-                    + "---------------------------------------------------------------------------\n"
-                    + "| Main menu commands:                                                     |\n"
-                    + "| Start <i> <f> - Starts a game with i words to guess.                    |\n"
-                    + "|                 You will have i x f attempts to guess the phrase!       |\n"
-                    + "| add <word>    - Add a word to the list of possible words.               |\n"
-                    + "| remove <word> - Remove a word from the list of possible words.          |\n"
-                    + "| check <word>  - Check if a word exists in the list of possible words.   |\n"
-                    + "| Type QUIT to exit the game.                                             |\n"
-                    + "|-------------------------------------------------------------------------|\n"
-                    + "| In game controls:                                                       |\n"
-                    + "| Enter \".\" at any time to forfeit.                                       |\n"
-                    + "| Enter \"*\" at any time to to start a new game                            |\n"
-                    + "| Enter ?<word> to check if a word exists                                 |\n"
-                    + "---------------------------------------------------------------------------\n\n");
-            
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid port number: " + args[1] + ".");
-            System.exit(1);
-        }
+        client = new Client("localhost", 5599);
         
+        // Starting message
+        System.out.print(
+                  "\n---------------------------------------------------------------------------\n"
+                + "|                 ???        Guess the Phrase!        ???                 |\n"
+                + "---------------------------------------------------------------------------\n"
+                + "| Main menu commands:                                                     |\n"
+                + "| Start <i> <f> - Starts a game with i words to guess.                    |\n"
+                + "|                 You will have i x f attempts to guess the phrase!       |\n"
+                + "| add <word>    - Add a word to the list of possible words.               |\n"
+                + "| remove <word> - Remove a word from the list of possible words.          |\n"
+                + "| check <word>  - Check if a word exists in the list of possible words.   |\n"
+                + "| Type QUIT to exit the game.                                             |\n"
+                + "|-------------------------------------------------------------------------|\n"
+                + "| In game controls:                                                       |\n"
+                + "| Enter \".\" at any time to forfeit.                                       |\n"
+                + "| Enter \"*\" at any time to to start a new game                            |\n"
+                + "| Enter ?<word> to check if a word exists                                 |\n"
+                + "---------------------------------------------------------------------------\n\n");
+         
         boolean client_wait = true;
         
         while(client_wait) {
