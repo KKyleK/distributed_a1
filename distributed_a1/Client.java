@@ -73,12 +73,22 @@ public class Client {
             
             // Commands are not functional yet
             System.out.print(
-                      "\nCommands:\n"
-                    + "Start <i> <f> - Starts a game with i words to guess.\n"
-                    + "                You will have i x f attempts to guess the phrase!\n"
-                    + "add <word>    - Add a word to the list of possible words.\n"
-                    + "remove <word> - Remove a word from the list of possible words.\n"
-                    + "check <word>  - Check if a word exists in the list of possible words.\n\n");
+                      "\n---------------------------------------------------------------------------\n"
+                    + "|                 ???        Guess the Phrase!        ???                 |\n"
+                    + "---------------------------------------------------------------------------\n"
+                    + "| Main menu commands:                                                     |\n"
+                    + "| Start <i> <f> - Starts a game with i words to guess.                    |\n"
+                    + "|                 You will have i x f attempts to guess the phrase!       |\n"
+                    + "| add <word>    - Add a word to the list of possible words.               |\n"
+                    + "| remove <word> - Remove a word from the list of possible words.          |\n"
+                    + "| check <word>  - Check if a word exists in the list of possible words.   |\n"
+                    + "| Type QUIT to exit the game.                                             |\n"
+                    + "|-------------------------------------------------------------------------|\n"
+                    + "| In game controls:                                                       |\n"
+                    + "| Enter \".\" at any time to forfeit.                                       |\n"
+                    + "| Enter \"*\" at any time to to start a new game                            |\n"
+                    + "| Enter ?<word> to check if a word exists                                 |\n"
+                    + "---------------------------------------------------------------------------\n\n");
             
         } catch (NumberFormatException e) {
             System.err.println("Invalid port number: " + args[1] + ".");
@@ -113,5 +123,7 @@ public class Client {
             System.out.print(">>> ");
             request = input.nextLine();
         }
+        client.writeRequest(request);   
+        System.out.println("\nThanks for playing!\n");
     }
 }

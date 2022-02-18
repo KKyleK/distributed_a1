@@ -63,11 +63,11 @@ public class UDPMicroservice {
         {
             case "add":
                 add(sp[1]);
-                output = "Added.";
+                output = sp[1] + " has been added to the word list.\n";
                 break;
             case "remove":
                 remove(sp[1]);
-                output = "Removed.";
+                output = sp[1] + " has been removed from the word list.\n";
                 break;
             case "check":
                 output = check(sp[1]);
@@ -200,11 +200,11 @@ public class UDPMicroservice {
 
         if(found == true)
         {
-            return "Found.";
+            return input + " exists in the word list.\n";
         }
         else
         {
-            return "Not found.";
+            return input + " does not exist in the word list.\n";
         }
     }
 
