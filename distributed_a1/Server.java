@@ -46,8 +46,8 @@ public class Server {
 	    
 	    ClientHandler(Socket socket) throws IOException {
 	        this.clientSocket = socket;
-	        this.in = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
+	        this.in =  new BufferedReader(
+	        		   new InputStreamReader(clientSocket.getInputStream()));
 	        this.out = new PrintStream(clientSocket.getOutputStream());
 	        
 	        this.socket = new DatagramSocket();
@@ -80,9 +80,13 @@ public class Server {
 	    /**
 	     * Starts a guessing game
 	     */
-	    private void start_game() {
-	        game_logic game = new game_logic(in, out);
-            game.run();
+	    private void start_game(ArrayList<String> words, int attempts) {
+	    	boolean success;
+	        game_logic game = new game_logic(in, out, words, attempts);
+	        success = game.run();
+	        
+	        out.print("Number of total wins: " + '\n'); //TODO
+            return;    
 	    }
 	  
 	    /**
@@ -160,7 +164,10 @@ public class Server {
                                 }
                                 System.out.println(words);
                                 
-                                //start_game(words, attempts);
+                                
+                                
+                                
+                               start_game(words, attempts);
                             } catch(NumberFormatException e) {
                                 retry();
                             }

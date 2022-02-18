@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class game_logic {
 
-    private ArrayList<String> words;
+   // private ArrayList<String> words;
     private ArrayList<String> words_to_guess;
     private ArrayList<Character> letters_guessed;
 	private BufferedReader in;
@@ -24,32 +24,18 @@ public class game_logic {
 
     private boolean guessed = false;
 
-    private int num_words_to_guess;
+    private int num_words_to_guess;   //Probably delete this.
 
-    public game_logic(BufferedReader in, PrintStream out) {
+    public game_logic(BufferedReader in, PrintStream out, ArrayList<String> words, int attempts) {
 
     	this.in = in;
     	this.out = out;
-        words = new ArrayList<String>();
-        words_to_guess = new ArrayList<String>();
+    	
+    	words_to_guess = words;
+    	fails = attempts;
         letters_guessed = new ArrayList<Character>();
     }
 
-    /**
-     * 
-     * @param file: The file to read from.
-     * @return Fills the arraylist words with words from the file.
-     */
-    public ArrayList<String> read_file(String file) throws FileNotFoundException {
-
-        Scanner input = new Scanner(new File(file));
-
-        while (input.hasNext()) {
-            words.add(input.next().toLowerCase()); // No capital letters.
-        }
-        Collections.shuffle(words);
-        return words;
-    }
     
     /**
      * Sends a signal to the client to wait for input.
@@ -87,39 +73,11 @@ public class game_logic {
     	return in.readLine();
     }
 
+
     /**
-     * 
-     * @param difficulty: The length of words you want to deal with.
-     * @return Fills the arraylist words_to_guess with words of the given length.
-     *         Returns true if the arraylist was
-     *         filled to difficulty level, false if not.
+     * Prints what the player has guessed correctly, or _ for letters that have 
+     * not been guessed.
      */
-    public boolean pick_words(int difficulty) {
-
-        ArrayList<String> possible_words = words;
-        Collections.shuffle(possible_words);
-
-        int words_choosen = 0;
-        int current_word = 0;
-
-        boolean success = false;
-
-        while (words_choosen < num_words_to_guess && current_word < possible_words.size()) {
-            if (possible_words.get(current_word).length() == difficulty) {
-                words_to_guess.add(possible_words.get(current_word));
-                words_choosen++;
-            }
-            current_word++;
-        }
-
-        if (words_choosen == num_words_to_guess) {
-            success = true;
-        }
-
-        return success;
-    }
-
-    // Prints the stuff you have guessed so far or _ for letters not guessed.
     public void print_current_words() {
 
         String current_word;
@@ -136,19 +94,30 @@ public class game_logic {
                 }
                 out.print(" ");
             }
+            
+            if(i+1 != words_to_guess.size()) {      //Don't print last 3 spaces.
             out.print("   ");
+            }
+            
             num_printed += current_word.length() + 3; // For the blank space
             if (num_printed >= 80) {
                 out.print('\n');
                 num_printed = 0;
-            }
+            } 
         }
+        out.print("C" + current_fails);
         return;
     }
 
-    // Core logic loop.
-    public void prompt() throws IOException {
+    /**
+     * Prompts the user on repeat to guess a letter or the entire phrase.
+     * @return: Whether the player successfully guessed every letter or the entire phrase.
+     * @throws IOException
+     */
+    public boolean prompt() throws IOException {
 
+    	boolean success = false;
+    	
         while (!guessed && current_fails < fails) {
 
             out.println("\nGuess a letter or the phrase: ");
@@ -157,7 +126,7 @@ public class game_logic {
             if (input.length() > 1) { // Guess was a string!
                 if (guess_string(input)) {
                     guessed = true;
-                    out.println("Congratulations! You guessed the phrase!");
+            
                 } else {
                     out.println("That is not the phrase.");
                     current_fails++;
@@ -171,7 +140,20 @@ public class game_logic {
 
                     letters_guessed.add(input.charAt(0));
                     if (guess_letter(input.charAt(0))) {
+                    	
+                    	
+                    	if(all_letters_guessed()) {
+                    		guessed = true;
+                    		success = true;
+                    	}
+                    	
+                    	else {
+                    		
                         out.println("Correct!");
+                        success = true;
+                    	}
+                       
+                    	
                     } else {
                         out.println("Incorrect!");
                         current_fails++;
@@ -180,15 +162,52 @@ public class game_logic {
             }
             if (!guessed) { // Stops it from printing when you win.
                 print_current_words();
+                
             }
-        }
+            else {
+            	 out.println("Congratulations! You guessed the phrase!");
+            	 success = true;
+            }
+        } 
         if (current_fails >= fails) {
-            out.println("You lose!");
+            out.println('\n' +"You lose!");
+            success = false;
         }
 
-        return;
+        return success;
     }
-
+    
+    /**
+     * 
+     * @return: Whether all of the letters making up the words have been guessed.
+     */
+    public boolean all_letters_guessed() {
+    	
+    	String current = new String();
+    	for (int i = 0; i < words_to_guess.size(); i++) {
+    		
+    		current = words_to_guess.get(i);
+    	
+    		for (int j = 0; j< letters_guessed.size(); j++) {
+    			
+    			if(current.contains(String.valueOf(letters_guessed.get(j)))){  
+    				
+    				current = current.replaceAll(String.valueOf(letters_guessed.get(j)), "");
+    			}
+    		}
+    			if(!current.equals("")) {
+    				return false;
+    		}
+    	}
+   
+    	return true;
+    }
+    
+    /**
+     * 
+     * @param input: The complete phrase typed out.
+     * @return: Whether or not the phrase guessed is the actual hidden phrase.
+     */
     public boolean guess_string(String input) {
 
         ArrayList<String> answer = new ArrayList<String>(Arrays.asList(input.split(" ")));
@@ -204,7 +223,11 @@ public class game_logic {
         }
         return true;
     }
-
+/**
+ * 
+ * @param input: The letter guessed
+ * @return: Whether or not the letter was in at least one of the words.
+ */
     public boolean guess_letter(char input) {
 
         letters_guessed.add(input);
@@ -225,54 +248,20 @@ public class game_logic {
         return in_phrase;
     }
     
-
-    public void run() {
-
-        if (words.isEmpty()) { // Might already have been read in.
-            try {
-                read_file("words.txt");
-            } catch (FileNotFoundException e) {
-                out.println("Could not find input file words.txt");
-                System.exit(0);
-            }
-        }
-
-        int difficulty; // Number of words to pick
-        boolean success; // If there were enough words of the length requested.
-        try {
-            do {
-                out.println("Enter how long you want the words to be: ");
-                difficulty = read_int();
-
-                out.println("How many words would you like to guess?");
-                num_words_to_guess = read_int();
-
-                success = pick_words(difficulty);
-                if (!success) {
-                    out.println("There are not enough words of that length.");
-                }
-
-            } while (!success);
-
-          out.println("How many lives would you like?");
-            fails = read_int();
-
-        } catch (InputMismatchException e) {
-            out.println("Input is not a number");
-            return;
-        } catch (IOException e) {
-        	e.printStackTrace();
-        	return;
-        }
-
-        // Begin the game
+/**
+ * 
+ * @return If the player won or not.
+ */
+    public boolean run() {
+    	boolean success = false;
 	    try {
 	        out.println("Phrase to guess: ");
 	        print_current_words();
-	        prompt(); // This holds the game logic
+	        success = prompt(); 
 	    } catch (IOException e) {
 	    	e.printStackTrace();
-	    	return;
+	    	return false;
 	    }
+	    return success;
     }
 }

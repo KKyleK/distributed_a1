@@ -44,7 +44,7 @@ public class UDPMicroservice {
                 InetAddress address = udpRequestPacket.getAddress();
                 int port = udpRequestPacket.getPort();
                 DatagramPacket udpReplyPacket = 
-                        new DatagramPacket(outputbuf, outputbuf.length, address, port);
+                        new DatagramPacket(outputbuf, outputbuf.length, port);
                 socket.send(udpReplyPacket);
             } catch (SocketException e) {
                 System.out.println(e.getMessage());
@@ -189,7 +189,7 @@ public class UDPMicroservice {
         while(sc.hasNextLine())
         {
             String word = sc.nextLine();
-            if(word.equals(input))
+            if(word.equals(input.toLowerCase()))
             {
                 found = true;
                 break;
