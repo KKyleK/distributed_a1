@@ -17,9 +17,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Implementation of a Basic Server Program.
- * 
- * @author Donald
+ * Implementation of the game server.
+ * Run with Server [Port #].
  *
  */
 public class Server {

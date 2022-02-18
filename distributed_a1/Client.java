@@ -10,6 +10,11 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+/**
+ * Implementation of the game client.
+ * Run with Client [Host IP] [Port #].
+ *
+ */
 public class Client {
     private static final String USAGE = "java Client [host] [port]";
     private Socket clientSocket;
@@ -18,7 +23,7 @@ public class Client {
 
     /**
      * Default constructor.
-     * @param host
+     * @param host The ip
      * @param port
      */
     public Client(String host, int port) {
@@ -35,8 +40,8 @@ public class Client {
 
     
     /**
-     * Sends a entered line off to the server.
-     * @param request
+     * Sends an input line off to the server.
+     * @param request The string to send.
      */
     void writeRequest(String request) {
             // Create output streams & write the request to the server
@@ -44,8 +49,9 @@ public class Client {
     }
 
     /**
-     * Receives a message from the server.
-     * @throws IOException 
+     * Checks to see if there is a message from the server and prints it out, unless it is an ENQ.
+     * @return Returns false if an ENQ signal is recieved from the server.
+     * @throws IOException
      */
     private boolean readAndPrintResponse() throws IOException {
     		if(in.ready()) {
