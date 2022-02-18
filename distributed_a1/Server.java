@@ -17,13 +17,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Implementation of the game server.
- * Run with Server [Port #].
- *
+ * Implementation of the game server. 
  */
 public class Server {
 
-	private static final String BAD_ARG = "Please specify a port number.\n";
+	private static final String BAD_ARG = "Error on launch.\n";
 	private ServerSocket serverSocket;
 	
 	public static int totalScore;
@@ -36,7 +34,7 @@ public class Server {
 	}
 	
 	/**
-	 * Deals with the client.
+	 * Handles new client.
 	 */
 	private static class ClientHandler implements Runnable {
 	    private Socket clientSocket;
@@ -47,7 +45,6 @@ public class Server {
 	    private String host;
 	    private int UDPport;
 	    private InetAddress address;
-	  //  private int totalScore;
 	    
 	    ClientHandler(Socket socket) throws IOException {
 	        this.clientSocket = socket;
@@ -59,12 +56,11 @@ public class Server {
 	        this.host = "localhost";
 	        this.UDPport = 5550;
 	        this.address = InetAddress.getByName(host);
-	       // this.totalScore = 0;
 	    }
 	    
 	    /**
-	     * 
-	     * @return
+	     * Prompts user for a command in game and waits for response.
+	     * @return a string of representing the command requested by the client
 	     * @throws IOException
 	     */
 	    private String parse_args() throws IOException {
@@ -82,7 +78,8 @@ public class Server {
 	    }
 	    
 	    /**
-	     * Starts a guessing game
+	     * Starts a guessing game using
+	     * @param words is an array of randomly generated words from the word list. 
 	     */
 	    private void start_game(ArrayList<String> words, int attempts) {
 	    	boolean success;
@@ -102,7 +99,13 @@ public class Server {
 	        out.println("Number of total wins: " + totalScore);
             return;    
 	    }
-	  
+	    
+	    
+	    /**
+	     * increments or decrements the servers score counter based on wins/losses of
+	     * all clients. 
+	     * @param score is the result of the game. 1 for a win, -1 for a loss.
+	     */
 	    synchronized private void doCritSect(int score)
 	    {
 	    	if(totalScore<=0 && score == -1) {
@@ -141,7 +144,6 @@ public class Server {
             return null;
 	    }
 	    
-	    
 	    /**
 	     * Sends a signal to the client to wait for input.
 	     */
@@ -164,11 +166,15 @@ public class Server {
 				System.out.println("Client Connected");
 				System.out.println();
 				
+				// Loops for command inputs.
 				boolean flag = true;
 				while(flag) {
     				String args = parse_args();
     				String[] cmd = args.split(" ", 3);
+    				
+    				// Handles different commands
     				switch(cmd[0]) {
+    				    // Start game
     				    case "start":
     				        
     				        if (cmd.length != 3) {
@@ -177,57 +183,59 @@ public class Server {
     				        }
     				        
     				        try {
-                                int i = Integer.parseInt(cmd[1]);
-                                int f = Integer.parseInt(cmd[2]);
+    				            int i = Integer.parseInt(cmd[1]); // number of words
+                                int f = Integer.parseInt(cmd[2]); // attempt factor
                                 int attempts = i * f;
                                 ArrayList<String> words = new ArrayList<String>();
                                 
-                                // retrieve i words from wordstore
+                                // retrieve i words from word store
                                 for(int w = 0; w < i; w++) {
                                     words.add(wordstore_request("random"));
                                 }
-                                System.out.println(words);
                                 
-                                
-                                
-                                
-                               start_game(words, attempts);
-                               out.println("You are back at the main menu, select option: ");
-                               out.println("| Start <i> <f> - Starts a game with i words to guess.                    |\n"
+                                start_game(words, attempts);
+                                out.println("You are back at the main menu, select option: ");
+                                out.println("| Start <i> <f> - Starts a game with i words to guess.                    |\n"
                                        + "|                 You will have i x f attempts to guess the phrase!       |\n"
                                        + "| add <word>    - Add a word to the list of possible words.               |\n"
                                        + "| remove <word> - Remove a word from the list of possible words.          |\n"
                                        + "| check <word>  - Check if a word exists in the list of possible words.   |\n"
-                                       + "| Type QUIT to exit the game.                                             |");
+                                       + "| Type QUIT to exit the game.                                             |\n");
                             } catch(NumberFormatException e) {
                                 retry();
                             }
     				        
     				        break;
-    				        
+    				    
+    				    // add word to word store
     				    case "add":
     				        out.println(wordstore_request(args));
     				        
     				        break;
-    				        
+    				    
+    				    // remove word from word store    
     				    case "remove":
     				        out.println(wordstore_request(args));
     				        break;
-    				        
+    				    
+    				    // check if word exists in word store
     				    case "check":
     				        out.println(wordstore_request(args));
     				        break;
-    				    
+    				        
+    				    // quit game
     				    case "QUIT":
     				        flag = false;
     				        break;
-    				        
+    				    
+    				    // no command, retry
     				    default:
     				        retry();
     				}
     				
 				}
-    		       
+    		    
+				// Close client connection
 		        out.println("Game over, Ending Connection");
 				clientSocket.close();
 		        System.out.println("Client Disconnected");
@@ -242,26 +250,12 @@ public class Server {
 
 	
 	public static void main(String[] args) throws IOException {
-		if (args.length != 1) {
-			System.err.println(BAD_ARG);
-			System.exit(1);
-		}
-		int port = 0;
-		String host = "localhost";
+		int port = 5599;
 		ServerSocket server = null;
-		
-		// Connect to word store
-		try {
-		    DatagramSocket socket = new DatagramSocket();
-		    InetAddress address = InetAddress.getByName(host);
-		} catch(Exception e) {
-		    System.err.println(e.getMessage());
-		    System.exit(1);
-		}
 		
 		// Open connection for clients
 		try {
-			port = Integer.parseInt(args[0]);
+			port = 5599;
 			server = new ServerSocket(port);
 			System.out.println("The server is running...");
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5); // Handle up to 5 clients

@@ -248,15 +248,9 @@ public class UDPMicroservice {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.err.println("Microservice error.");
-            System.exit(1);
-        }
-        
-        int port = 0;
+        int port = 5550;
         UDPMicroservice server = null;
         try {
-            port = Integer.parseInt(args[0]);
             server = new UDPMicroservice(port);
         } catch (NumberFormatException e) {
             System.err.println("Invalid port number: " + port + ".");

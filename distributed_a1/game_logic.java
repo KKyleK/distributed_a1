@@ -11,13 +11,7 @@ import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-
-
-
-
-
 import java.net.*;
-
 
 public class game_logic {
 
@@ -74,13 +68,6 @@ public class game_logic {
 	return;
     }
    
-     
-    
-    
-    
-    
-    
-    
     /**
      * Sends a signal to the client to wait for input.
      */
