@@ -45,7 +45,7 @@ public class game_logic {
     }
 
     
-    public void check_if_word(String word) {
+    private void check_if_word(String word) {
     
     	String input = "check " + word;
     try {
@@ -122,7 +122,7 @@ public class game_logic {
      * Prints what the player has guessed correctly, or _ for letters that have 
      * not been guessed.
      */
-    public void print_current_words() {
+    private void print_current_words() {
 
         String current_word;
         int num_printed = 0; // Limit the print width to 80
@@ -158,7 +158,7 @@ public class game_logic {
      * @return: Whether the player successfully guessed every letter or the entire phrase.
      * @throws IOException
      */
-    public boolean prompt() throws IOException {
+    private boolean prompt() throws IOException {
 
     	boolean success = false;
     	
@@ -237,7 +237,7 @@ public class game_logic {
      * 
      * @return: Whether all of the letters making up the words have been guessed.
      */
-    public boolean all_letters_guessed() {
+    private boolean all_letters_guessed() {
     	
     	String current = new String();
     	for (int i = 0; i < words_to_guess.size(); i++) {
@@ -264,7 +264,7 @@ public class game_logic {
      * @param input: The complete phrase typed out.
      * @return: Whether or not the phrase guessed is the actual hidden phrase.
      */
-    public boolean guess_string(String input) {
+    private boolean guess_string(String input) {
 
         ArrayList<String> answer = new ArrayList<String>(Arrays.asList(input.split(" ")));
 
@@ -284,7 +284,7 @@ public class game_logic {
  * @param input: The letter guessed
  * @return: Whether or not the letter was in at least one of the words.
  */
-    public boolean guess_letter(char input) {
+    private boolean guess_letter(char input) {
 
         letters_guessed.add(input);
         boolean in_phrase = false;
