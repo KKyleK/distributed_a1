@@ -21,7 +21,6 @@ public class UDPMicroservice {
     public void serve() {
         while(true) {
             try {
-                System.out.println("Listening for incoming requests...");
                 byte[] inputbuf = new byte[256];
                 byte[] outputbuf = new byte[256];
 
