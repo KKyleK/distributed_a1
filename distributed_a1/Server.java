@@ -26,11 +26,11 @@ public class Server {
 
 	private static final String BAD_ARG = "Please specify a port number.\n";
 	private ServerSocket serverSocket;
-
+	
 	public Server(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
 	}
-
+	
 	/**
 	 * Deals with the client.
 	 */
@@ -168,16 +168,20 @@ public class Server {
     				        break;
     				        
     				    case "add":
-    				        System.out.println(wordstore_request(args));
+    				        out.println(wordstore_request(args));
     				        
     				        break;
     				        
     				    case "remove":
-    				        System.out.println(wordstore_request(args));
+    				        out.println(wordstore_request(args));
     				        break;
     				        
     				    case "check":
-    				        System.out.println(wordstore_request(args));
+    				        out.println(wordstore_request(args));
+    				        break;
+    				    
+    				    case "QUIT":
+    				        flag = false;
     				        break;
     				        
     				    default:
