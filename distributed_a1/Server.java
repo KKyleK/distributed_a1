@@ -96,7 +96,7 @@ public class Server {
 	        
 	        doCritSect(score);
 	        
-	        out.println("Number of total wins: " + totalScore);
+	        out.println("Global score: " + totalScore);
             return;    
 	    }
 	    
